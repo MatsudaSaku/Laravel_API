@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Validator;
 use Illuminate\Support\Facades\Auth;
+
 
 class LoginController extends Controller
 {
@@ -14,24 +14,34 @@ class LoginController extends Controller
     {
         $credentials = $request->input('user');
 
-        if(! $token = Auth::attempt($credentials)){
-            return response()->json(['error'=>'Unauthorized'], 401);
-        }
+        if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
+            $user = User::where('email', $credentials['email'])->first();
+    
+            if ($user === null) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
+    
+            $token = $user->createToken('token-name')->plainTextToken;
 
-        $user = Auth::user();
-        return $this->respondWithToken($token, $user);
-    }
-
-    protected function respondWithToken($token, $user)
-    {
-        return response()->json([
-            'user' => [
-                'email' => $user->email,
-                'username' => $user->username,
-                'bio' => $user->bio ?? '', 
-                'image' => $user->image ?? '', 
+            return response()->json([
+                'user' => [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'bio' => $user->bio ?? null, 
+                    'image' => $user->image ?? null, 
+                ],
                 'token' => $token
-            ]
-        ]);
+            ]);
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
     }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Logged out']);
+    }
+    
 }

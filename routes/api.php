@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,3 +23,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/users', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 
 Route::post('/users/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+
+Route::post('/articles', [App\Http\Controllers\ArticleController::class, 'store'])->middleware('auth:sanctum');
+
+Route::post('/users/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::put('/articles/{slug}',[App\Http\Controllers\ArticleController::class, 'update'])->middleware('auth:sanctum');
+
+Route::delete('/articles/{slug}', [App\Http\Controllers\ArticleController::class, 'delete'])->middleware('auth:sanctum');
+
+Route::get('/articles/{slug}', [App\Http\Controllers\ArticleController::class, 'show']);
