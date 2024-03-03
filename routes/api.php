@@ -33,3 +33,5 @@ Route::put('/articles/{slug}',[App\Http\Controllers\ArticleController::class, 'u
 Route::delete('/articles/{slug}', [App\Http\Controllers\ArticleController::class, 'delete'])->middleware('auth:sanctum');
 
 Route::get('/articles/{slug}', [App\Http\Controllers\ArticleController::class, 'show']);
+
+Route::post('/articles/{slug}/favorite',[App\Http\Controllers\ArticleController::class, 'favorite'])->middleware('auth:sanctum');

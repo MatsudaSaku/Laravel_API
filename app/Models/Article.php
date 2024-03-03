@@ -39,4 +39,9 @@ class Article extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'favorites', 'article_id', 'user_id');
+    }
+
 }

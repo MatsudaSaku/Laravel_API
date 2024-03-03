@@ -5,17 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Tag extends Model
+class Favorite extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'user_id',
+        'article_id',
     ];
-
-    public function articles()
-    {
-        return $this->belongsToMany(Article::class);
-    }
-
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Article;
+use App\Models\Favorite;
 use App\Models\Tag;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -162,4 +163,30 @@ class ArticleController extends Controller
         return response()->json(['message' => 'Article deleted successfully']);
 
     }
+
+        public function favorite($slug)
+    {
+        $user = Auth::user();
+        $article = Article::where('slug', $slug)->first();
+    
+        if (!$article) {
+            return response()->json(['message' => 'Article not found'], 404);
+        }
+
+        $isFavorited = Favorite::where('user_id', $user->id)
+                               ->where('article_id', $article->id)
+                               ->exists();
+
+        if ($isFavorited) {
+            return response()->json(['message' => 'Article is already favorited'], 409);
+        }
+
+        Favorite::create([
+            'user_id' => $user->id,
+            'article_id' => $article->id,
+        ]);
+
+        return response()->json(['article' => $article]);
+    }
 }
+ 
